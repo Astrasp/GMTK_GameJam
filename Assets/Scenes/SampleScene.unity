@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 395252598}
   - component: {fileID: 395252597}
   - component: {fileID: 395252596}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -515,7 +515,7 @@ GameObject:
   - component: {fileID: 511467992}
   - component: {fileID: 511467991}
   - component: {fileID: 511467990}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -626,7 +626,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 749006010}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enviroment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -723,7 +723,7 @@ GameObject:
   - component: {fileID: 1152433654}
   - component: {fileID: 1152433653}
   - component: {fileID: 1152433652}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -910,6 +910,10 @@ PrefabInstance:
       propertyPath: groundCheck
       value: 
       objectReference: {fileID: 189890982}
+    - target: {fileID: 2895735248543819575, guid: c60e4e59fd6feaa46ae1f2fd07efcbb1, type: 3}
+      propertyPath: whatIsGround.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 5855313297089582484, guid: c60e4e59fd6feaa46ae1f2fd07efcbb1, type: 3}
       propertyPath: m_Name
       value: Player
