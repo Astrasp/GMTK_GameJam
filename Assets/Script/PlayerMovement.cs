@@ -2,12 +2,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [Header ("Movement")]
 
     public float groundDrag;
+    public MovementState state;
+    public float dashSpeedChangeFactor;
+
+    public float maxYSpeed;
 
     public float jumpForce;
     public float jumpCooldown;
@@ -20,11 +25,13 @@ public class PlayerMovement : MonoBehaviour
 
 
     [Header ("Ground Check")]
-    public float playerHeight;
+    
     public LayerMask whatIsGround;
     bool grounded;
     public float moveSpeed;
 
+    public float dashSpeed;
+    public float walkSpeed;
 
 
     public Transform orientation;
@@ -44,11 +51,90 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    private float desiredMoveSpeed;
+    private float lastDesiredMoveSpeed;
+    private MovementState lastState;
+    private bool keepMomentum;
+
+    private void StateHandler()
+    {
+        if(!grounded)
+        {
+            state = MovementState.air;
+            desiredMoveSpeed = walkSpeed;
+        }
+        //Mode - Dashing
+        else if (dashing)
+        {
+            state = MovementState.dashing;
+            desiredMoveSpeed = dashSpeed;
+            speedChangeFactor = dashSpeedChangeFactor;
+        }
+
+
+        //Mode - walking
+        else if (grounded)
+        {
+            state = MovementState.walking;
+            desiredMoveSpeed = walkSpeed;
+        }
+
+       
+        //Rest Modes will be added if needed
+
+        bool desiredMoveSpeedHasChanged = desiredMoveSpeed != lastDesiredMoveSpeed;
+        if (lastState == MovementState.dashing) keepMomentum = true;
+
+        if (desiredMoveSpeedHasChanged)
+        {
+            if(keepMomentum)
+            {
+                StopAllCoroutines();
+                StartCoroutine(SmoothlyLerpMoveSpeed());
+            }
+            else
+            {
+                StopAllCoroutines();
+                moveSpeed = desiredMoveSpeed;
+            }
+        }
+        lastDesiredMoveSpeed = desiredMoveSpeed;
+        lastState = state;
+    }
+
+    private float speedChangeFactor;
+    private IEnumerator SmoothlyLerpMoveSpeed()
+    {
+        // Smoothly lerp movementSpeed to desired value
+        float time = 0;
+        float difference = Mathf.Abs(desiredMoveSpeed - moveSpeed);
+        float startValue = moveSpeed;
+
+        float boostFactor = speedChangeFactor;
+
+        while (time < difference)
+        {
+            moveSpeed = Mathf.Lerp(startValue, desiredMoveSpeed, time / difference);
+            time += Time.deltaTime * boostFactor;
+
+            yield return null;
+        }
+        moveSpeed = desiredMoveSpeed;
+        speedChangeFactor = 1f;
+        keepMomentum = false;
+    }
+
+
     private void FixedUpdate()
     {
         // SpeedControl();
         MovePlayer();
-         
+
+
+        //limit y vel
+
+        if(maxYSpeed != 0 && rb.linearVelocity.y > maxYSpeed)
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, maxYSpeed, rb.linearVelocity.z);
     }
 
     private void Update()
@@ -64,6 +150,8 @@ public class PlayerMovement : MonoBehaviour
         //forInput
         MyInput();
 
+        StateHandler(); //for player state
+
        
 
         // Handle Drag
@@ -78,8 +166,10 @@ public class PlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        
+
         // when to jump
-        if(Input.GetKey(jumpKey) && readyToJump && grounded)
+        if(Input.GetKeyDown(jumpKey) && readyToJump && grounded)
         {
             readyToJump = false;
             
@@ -114,6 +204,8 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
+    
+
     // private void SpeedControl()
     // {
     //     Vector3 flatVel = new Vector3(rb.linearVelocity.x, 0f , rb.linearVelocity.z);
@@ -141,4 +233,15 @@ public class PlayerMovement : MonoBehaviour
     {
         readyToJump = true;
     }
+
+    public enum MovementState
+    {
+        walking,
+        sprinting,
+        crouching,
+        dashing,
+        air
+    }
+
+    public bool dashing;
 }
