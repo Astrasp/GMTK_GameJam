@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Script\DynamicInventory\DragDropItem.cs" />
+    <Compile Include="Assets\Script\AirCannon\AirCannonScript.cs" />
     <Compile Include="Assets\Script\DynamicInventory\BulletItemOS.cs" />
     <Compile Include="Assets\Script\Dashing.cs" />
     <Compile Include="Assets\Script\DynamicInventory\RemoveBullet.cs" />

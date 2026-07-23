@@ -96,7 +96,7 @@ MonoBehaviour:
   rectTransform: {fileID: 6991094758766008744}
   content: {fileID: 8930143505009739556}
   canvasGroup: {fileID: 2988474369677690010}
-  placeHolderLayout: {fileID: 0}
+  placeHolderLayout: {fileID: 8385346464971039911}
 --- !u!1 &7783512865664982392
 GameObject:
   m_ObjectHideFlags: 0
